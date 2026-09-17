@@ -17,6 +17,7 @@ Repositório central para documentação, configuração e portabilidade do meu 
 | **MCP** (Model Context Protocol) | Protocolo de contexto para fontes de dados locais (Docker, Git, DBs) | Configurável |
 | **direnv / 1Password CLI** | Gerenciamento seguro de chaves de API (sem `.env` commitado) | Shell hook |
 | **Homebrew Bundle** (`Brewfile`) | Automação de instalação de binários em novo Mac | `brew bundle` |
+| **Graphify** (`Graphify-Labs/graphify`) | Transforma o codebase em knowledge graph consultável (AST parsing, sem vector store) | Skill local |
 
 ---
 
@@ -160,3 +161,33 @@ my-setup-ia/
 ## 📝 Licença
 
 Uso pessoal — Kleber / Danylo Silva
+
+---
+
+## 🔗 Graphify — Knowledge Graph do Codebase
+
+O [Graphify](https://github.com/Graphify-Labs/graphify) transforma qualquer codebase (código, docs, SQL schemas, configs, PDFs) em um **knowledge graph consultável**. Usa AST parsing local e determinístico — sem vector store, sem API externa.
+
+### Benefícios no Setup
+- LLMs entendem a **estrutura real** do projeto (dependências, imports, relações entre módulos)
+- Funciona como **skill** para Claude Code, Cursor, Codex e Gemini CLI
+- Cada aresta do grafo é **explicada** — não é caixa preta
+- 100% local — zero custo de tokens para indexação
+
+### Instalação
+```bash
+# Clonar o repositório
+git clone https://github.com/Graphify-Labs/graphify.git ~/.graphify
+
+# Usar como skill nos agentes
+# Claude Code: /graphify no prompt
+# Cursor: configurar como skill
+# Gemini CLI: registrar como tool
+```
+
+### Teste — Graphify
+```bash
+cd ~/meu-projeto
+graphify scan .
+graphify query "quais módulos dependem do módulo auth?"
+```
