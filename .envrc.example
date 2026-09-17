@@ -1,0 +1,16 @@
+# === Meu Setup de IA — Template de Variáveis ===
+# Copie para .envrc e preencha com suas chaves reais
+# Nunca commite o .envrc!
+
+# Tier 1
+export OPENAI_API_KEY=sk-CHANGE_ME
+export GOOGLE_API_KEY=AIza-CHANGE_ME
+export ANTHROPIC_API_KEY=sk-ant-CHANGE_ME
+
+# Tier 2
+export DEEPSEEK_API_KEY=sk-CHANGE_ME
+
+# Serviços locais
+export OMNIROUTE_URL=http://localhost:20128
+export AI_MEMORY_URL=http://127.0.0.1:49374
+export OLLAMA_HOST=http://localhost:11434

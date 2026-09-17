@@ -1,0 +1,21 @@
+# Secrets
+.env
+.envrc
+*.key
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node
+node_modules/
+
+# Logs
+*.log
