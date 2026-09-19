@@ -13,6 +13,7 @@ brew "node"
 brew "python"
 brew "jq"
 brew "curl"
+brew "gh"
 
 # Editores (casks)
 cask "visual-studio-code"

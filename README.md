@@ -15,6 +15,9 @@ Repositório central para documentação, configuração e portabilidade do meu 
 | **Ollama** | Motor de execução local (API OpenAI-compatible) | `localhost:11434` |
 | **Aider** (`aider-chat`) | Agente CLI agnóstico (diffs + commits automáticos) | Terminal |
 | **MCP** (Model Context Protocol) | Protocolo de contexto para fontes de dados locais (Docker, Git, DBs) | Configurável |
+| **Playwright MCP** (`@playwright/mcp`) | Validação autônoma de telas, fluxos visuais e testes E2E | MCP local |
+| **AI Harness & Sensores** | Trilhos determinísticos e sensores (unitários, integração, linter) | Test suite / CI |
+| **Esteira de Engenharia & Spec-Driven** | RFC humana, cards atômicos, micro-PRs (<500 linhas) e observabilidade first | Metodologia |
 | **direnv / 1Password CLI** | Gerenciamento seguro de chaves de API (sem `.env` commitado) | Shell hook |
 | **Homebrew Bundle** (`Brewfile`) | Automação de instalação de binários em novo Mac | `brew bundle` |
 | **Graphify** (`Graphify-Labs/graphify`) | Transforma o codebase em knowledge graph consultável (AST parsing, sem vector store) | Skill local |
@@ -142,18 +145,79 @@ ollama run llama3 "Explique o padrão MVC em uma frase"
 aider --model ollama/llama3 --yes
 ```
 
+### Teste 5 — Playwright MCP (Sensores de UI)
+```bash
+# Validar disponibilidade do servidor Playwright MCP
+npx -y @playwright/mcp@latest --help
+```
+
+---
+
+## 🛡️ AI Harness, Spec-Driven & Gestão de Contexto
+
+Baseado nos ensinamentos e benchmarks práticos de **Waldemar Neto (Dev Lab)**:
+
+- **Evolução dos 4 Níveis:**
+  1. *Nível 0 (Vibe Coding):* Prompts soltos sem plano, sem testes e sem ler código → quebra em produção.
+  2. *Nível 1 (Plan Mode + Subagents):* Ciclo rigoroso de `Research` → `Plan` → `Implement` → `Verify`.
+  3. *Nível 2 (Skills Customizadas Auto-verificáveis):* Substituição de agentes customizados engessados por skills locais determinísticas.
+  4. *Nível 3 (Spec-Driven Moderno):* Especificações lean em **Given-When-Then** com tasks atômicas e checklist de validação.
+  5. *Nível 4 (AI Harness Completo):* Trilhos determinísticos (Rails) + Sensores de feedback para **fazer a IA provar o que fez**.
+- **A Regra dos 60% e o Perigo do `/compact`:**
+  - A atenção de LLMs degrada fortemente após 60-70% de ocupação da janela de contexto.
+  - O comando `/compact` descarta regras sutis de domínio e gera alucinações. **Solução:** Planejar em arquivo, resetar a sessão e implementar com contexto zerado.
+- **Playwright MCP como Sensor de Telas:** O agente não apenas gera o código, mas sobe o app e navega autonomamente para validar visualmente o fluxo antes de entregar.
+- **`AGENTS.md` Enxuto:** "Menos é mais". Evite manuais prolixos; forneça apenas os comandos exatos de verificação e regras indiscutíveis do projeto.
+
+📖 **Guia detalhado:** [docs/workflows/harness-spec-driven.md](docs/workflows/harness-spec-driven.md)  
+📄 **Template:** [templates/AGENTS.md.example](templates/AGENTS.md.example) | [templates/SPEC.md](templates/SPEC.md)
+
+---
+
+## 🏭 Esteira de Engenharia de Software & Observabilidade First
+
+Baseado nas discussões e práticas de produção de **Augusto Galego & Samuel (Sam)**:
+
+- **Arquitetura Humana Primeiro (A RFC):**
+  - Manter o *ownership* do desenvolvedor através de decisões prévias de System Design (banco, índices, filas, contratos).
+  - Documentação em RFCs colaborativas no repositório antes de acionar a IA.
+- **Separação de Responsabilidades:**
+  - **Product Cards:** Foco na dor do usuário e regras de negócio.
+  - **Technical Cards:** Detalhamento de endpoints, migrações, observabilidade, feature flags e estratégia de rollback.
+- **Métricas de Engenharia:**
+  - **Cycle Time Saudável:** Fechar cards técnicos em **~24 horas**.
+  - **Micro-PRs (< 500 linhas):** Limitar o tamanho do PR para garantir alta precisão da IA e viabilizar code reviews humanos em **10 a 15 minutos**.
+- **Observabilidade First:**
+  - Princípio **Fail-Safe** (processos secundários não derrubam produção) vs **Fail-Fast** (regras de domínio críticas interrompem execução imediatamente).
+  - Instrumentação ativa de logs, métricas e alertas (*fast burning*).
+  - MCPs conectados à observabilidade em runtime para investigar causas-raiz sem reprodução local manual.
+- **Disciplina com Testes & Combate ao AI Slop:**
+  - *"Escreva o critério e LEIA o teste"*: Validação humana das asserções e prática de TDD com IA.
+  - Repúdio ao acúmulo de arquivos e documentações geradas automaticamente que ninguém lê (débito cognitivo).
+
+📖 **Guia detalhado:** [docs/workflows/pipeline-engenharia-ia.md](docs/workflows/pipeline-engenharia-ia.md)  
+📄 **Template:** [templates/RFC.md](templates/RFC.md)
+
 ---
 
 ## 📁 Estrutura do Repositório
 
 ```
 my-setup-ia/
-├── README.md              ← Este arquivo
-├── Brewfile               ← Dependências Homebrew
-├── .envrc.example         ← Template de variáveis de ambiente
-├── .gitignore             ← Proteção de secrets
+├── README.md                      ← Documentação central do setup
+├── Brewfile                       ← Dependências Homebrew automatizadas
+├── .envrc.example                 ← Template de variáveis de ambiente
+├── .gitignore                     ← Proteção de secrets e caches
+├── docs/                          ← Guias aprofundados de engenharia
+│   └── workflows/
+│       ├── harness-spec-driven.md ← Guia de Harness, Spec-Driven e Gestão de Contexto
+│       └── pipeline-engenharia-ia.md ← Guia de Esteira, RFCs e Observabilidade
+├── templates/                     ← Blueprints reutilizáveis para projetos
+│   ├── AGENTS.md.example          ← Template minimalista sensor-driven
+│   ├── RFC.md                     ← Template para decisões de arquitetura humana
+│   └── SPEC.md                    ← Template de especificação técnica moderna
 └── scripts/
-    └── Ativar-servicos-IA.command  ← Script de ativação
+    └── Ativar-servicos-IA.command  ← Script de ativação de serviços locais
 ```
 
 ---

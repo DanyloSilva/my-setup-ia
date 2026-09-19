@@ -1,0 +1,40 @@
+# AGENTS.md Template (Minimalista & Sensor-Driven)
+<!--
+  DIRETRIZ: "Menos é mais".
+  Modelos de fronteira performam melhor com poucas regras concisas e comandos exatos de verificação,
+  em vez de manuais extensos de 50 páginas.
+-->
+
+## 🎯 Objetivo do Projeto
+Breve resumo de 2 a 3 linhas sobre a responsabilidade desta base de código, stack principal e público-alvo.
+
+---
+
+## 🛠️ Comandos de Verificação (Sensores Determinísticos)
+
+Antes de considerar qualquer tarefa concluída, você DEVE rodar estes comandos e garantir que passem com 100% de sucesso:
+
+- **Typecheck & Linter:** `npm run lint` ou `ruff check .`
+- **Testes Unitários/Integração:** `npm test` ou `pytest`
+- **Testes de UI / E2E:** `npx playwright test` (ou via Playwright MCP para validar telas e fluxos visuais)
+- **Build de Produção:** `npm run build`
+
+---
+
+## 📐 Regras de Ouro de Engenharia
+
+1. **Faça a IA Provar o que Fez:**
+   - Nunca afirme que a tarefa está concluída sem executar os testes e comandos acima.
+   - Mostre a saída do terminal confirmando que os testes passaram.
+
+2. **Tamanho Máximo de PR (Micro-PRs):**
+   - Mantenha alterações focadas e com menos de 500 linhas de código (excluindo testes/docs).
+   - Não misture refatorações de código legado com novas funcionalidades.
+
+3. **Arquitetura & Resiliência:**
+   - **Fail-Fast:** Erros em regras de negócio críticas devem interromper a execução imediatamente com mensagens claras.
+   - **Fail-Safe:** Operações secundárias (analytics, emails secundários, logs externos) não podem derrubar a transação principal.
+   - Não adicione abstrações desnecessárias ou novas dependências sem necessidade explícita.
+
+4. **Preservação de Contexto:**
+   - Se a janela de contexto estiver acima de 60%, encerre o planejamento em arquivo e inicie a implementação em sessão limpa.
