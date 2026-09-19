@@ -115,6 +115,69 @@ zsh scripts/Ativar-servicos-IA.command
 
 ---
 
+## 🚀 Inicialização em Novos Projetos (Onboarding & Scan)
+
+Ao iniciar em um novo projeto ou empresa, **não clone este repositório dentro da base de código do projeto**. Mantenha o `my-setup-ia` centralizado em sua máquina e use o script de bootstrap para inspecionar a arquitetura e gerar a base de conhecimento (`CLAUDE.md`) sob medida.
+
+### 1. Script de Escaneamento (`scripts/init-project.sh`)
+
+Crie o script abaixo em seu setup (`chmod +x scripts/init-project.sh`):
+
+```bash
+#!/usr/bin/env bash
+set -e
+
+PROJECT_DIR="${1:-.}"
+cd "$PROJECT_DIR"
+
+echo "🔍 Escaneando arquitetura do projeto em: $(pwd)..."
+
+claude "Você é um arquiteto especialista em Java e microsserviços. 
+Analise este repositório focando em:
+1. Build & Runtime:
+   - Versão do Java/JDK, build tool (Maven com pom.xml ou Gradle com build.gradle/settings.gradle).
+   - Comandos exatos: build sem testes, rodar testes unitários, testes de integração e subida local (Spring Boot bootRun/spring-boot:run, Quarkus, Micronaut, etc.).
+2. Arquitetura & Dependências:
+   - Framework web, mensageria/eventos (Kafka, RabbitMQ, SQS), banco de dados e migrações (Flyway/Liquibase).
+   - Comunicação entre microsserviços (OpenFeign, WebClient, gRPC).
+3. Docker & Localstack:
+   - Mapeamento de serviços no docker-compose e portas de dependências externas.
+4. Padrões & Regras de Código:
+   - Padrão arquitetural (Hexagonal, Clean Architecture, MVC tradicional), mapeamento (MapStruct), validação e tratamento de exceções.
+   - Padrão de branches, conventional commits e formato de PRs.
+
+Gere um arquivo 'CLAUDE.md' limpo, direto e operacional na raiz deste projeto com essas diretrizes."
+
+echo "✅ CLAUDE.md gerado com sucesso!"
+```
+
+### 2. Fluxo de Uso no Dia a Dia
+
+Ao clonar um novo repositório corporativo:
+
+```bash
+# 1. Acesse a pasta do projeto da empresa
+cd ~/workspace/servico-de-faturamento
+
+# 2. Execute o scan a partir do seu setup central
+~/my-setup-ia/scripts/init-project.sh
+
+# 3. Escolha como manter o arquivo:
+# Opção A: Uso individual (não commitar no repo do time)
+echo "CLAUDE.md" >> .git/info/exclude
+
+# Opção B: Compartilhar as diretrizes com a equipe
+git add CLAUDE.md && git commit -m "docs: adiciona CLAUDE.md para assistentes de IA"
+```
+
+### Por que esse formato resolve seu caso?
+* **Especializado em Java:** O prompt força a IA a procurar especificamente gerenciadores de dependência (`pom.xml`/`build.gradle`), profiles de ambiente do Spring, brokers de mensageria e `docker-compose`.
+* **Zero impacto no Git:** Você roda a CLI externamente e isola o arquivo via `.git/info/exclude`, sem risco de subir arquivos pessoais ou acidentalmente criar conflitos de subrepositório.
+
+📄 **Template de Fallback para Java/Spring:** [templates/CLAUDE-java-spring.md.example](templates/CLAUDE-java-spring.md.example)
+
+---
+
 ## 🧪 Plano de Testes
 
 ### Teste 1 — OmniRoute (Gateway)
@@ -214,10 +277,12 @@ my-setup-ia/
 │       └── pipeline-engenharia-ia.md ← Guia de Esteira, RFCs e Observabilidade
 ├── templates/                     ← Blueprints reutilizáveis para projetos
 │   ├── AGENTS.md.example          ← Template minimalista sensor-driven
+│   ├── CLAUDE-java-spring.md.example ← Template de fallback para microsserviços Java/Spring
 │   ├── RFC.md                     ← Template para decisões de arquitetura humana
 │   └── SPEC.md                    ← Template de especificação técnica moderna
 └── scripts/
-    └── Ativar-servicos-IA.command  ← Script de ativação de serviços locais
+    ├── Ativar-servicos-IA.command  ← Script de ativação de serviços locais
+    └── init-project.sh            ← Script de scan e onboarding arquitetural (Java/Microsserviços)
 ```
 
 ---

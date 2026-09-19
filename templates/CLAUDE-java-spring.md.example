@@ -1,0 +1,33 @@
+# CLAUDE.md — Diretrizes para Microsserviços Java & Spring Boot
+
+## ☕ Build & Runtime
+- **Linguagem:** Java 21 (LTS)
+- **Build Tool:** Maven (`pom.xml`) ou Gradle Wrapper (`./gradlew`)
+- **Comandos Principais:**
+  - Build rápido sem testes: `mvn clean install -DskipTests` ou `./gradlew assemble -x test`
+  - Testes Unitários: `mvn test` ou `./gradlew test`
+  - Testes de Integração: `mvn verify -Pintegration-test` ou `./gradlew integrationTest`
+  - Execução Local: `mvn spring-boot:run` ou `./gradlew bootRun`
+  - Subir dependências externas: `docker-compose up -d`
+
+## 🏗️ Arquitetura & Stack
+- **Framework:** Spring Boot 3.x (Spring Web, Spring Data JPA, Spring Security)
+- **Mensageria:** Apache Kafka / RabbitMQ (consumers com dead-letter queues e idempotent receivers)
+- **Persistência:** PostgreSQL / MySQL com migrações via **Flyway** (`src/main/resources/db/migration`)
+- **Comunicação Inter-serviços:** OpenFeign com Resilience4j (Circuit Breaker, Retry e Fallback)
+- **Mapeamento & Boilerplate:** MapStruct e Lombok
+
+## 📐 Padrões de Código & Design
+- **Estrutura:** Arquitetura Hexagonal (Ports & Adapters) ou Clean Architecture:
+  - `domain`: Modelos puros e regras de negócio invariantes (sem anotações de infra).
+  - `application`: Use cases, commands e interfaces de portas de entrada/saída.
+  - `infrastructure`: Controllers REST, adapters de banco de dados, clientes Feign e mensageria.
+- **Tratamento de Exceções:** `@ControllerAdvice` centralizado retornando padrão RFC 7807 (`ProblemDetail`).
+- **Validação:** Bean Validation (`jakarta.validation.*`) com mensagens expressivas.
+
+## 🛡️ Regras de Engenharia & Qualidade
+- **Testes Obrigatórios:**
+  - Use Mockito + JUnit 5 para unidade em regras de negócio.
+  - Use Testcontainers para testes de integração com banco de dados e mensageria real.
+- **Micro-PRs:** Mantenha alterações abaixo de 500 linhas de código.
+- **Conventional Commits:** `feat:`, `fix:`, `refactor:`, `test:`, `docs:`.
